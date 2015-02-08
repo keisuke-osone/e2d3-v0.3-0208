@@ -47,6 +47,22 @@ function e2d3Update(responce) {
 }
 
 
+//スライだー をついか
+
+var id ="#e2d3-chart-area";
+function add_slider(){
+	drawArea = d3.select(id)
+	.append("input")
+    .attr("type",'range')
+    .style('width','100px').style('height','10px')
+    .attr('min',0)
+    .attr('max',100)
+    .attr('step',20)
+    .on('change',function(d){
+        console.log(this.value +"");
+    })
+
+};
 
 //変換されたjsonデータを使ってグラフ描画
 function show(data) {
