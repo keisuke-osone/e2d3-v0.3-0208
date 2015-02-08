@@ -52,6 +52,7 @@ var metrics = 'wind_speed';
 
 //変換されたjsonデータを使ってグラフ描画
 function show(data) {
+    
     //dataは、bind2jsonで渡すdimensionオプションによって、整形されたJsonオブジェクトです。
     //描画は、#e2d3-chart-area 内にしてください。
         
@@ -97,7 +98,6 @@ function show(data) {
 
     
     // x軸をsvgに表示
-    drawArea.
     drawArea
         .append("g")
         .attr("class", "x axis")
