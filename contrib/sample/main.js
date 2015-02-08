@@ -12,6 +12,10 @@ var maxWidth = windowSize;
 var leftMargin = 50;
 var topMargin = 50;
 var bottomMargin = 50;
+
+
+///Ts gloval value
+var ts_slider = null;
     
 // 描画領域のサイズを設定
 var height = maxHeight - topMargin - bottomMargin;
@@ -28,7 +32,7 @@ drawArea = d3.select('#e2d3-chart-area').append('svg')
 
 //Excelにデータがセットされた後、最初に呼ばれるメソッド（必須）
 function e2d3Show(isUpdate) {
-
+    add_slider();
     //Excel上でのデータ変更イベントを補足（この場合はe2d3Updateメソッドをコールバックに指定）
     //"e2d3BindId"はグローバルな変数です
     if (isUpdate) {
@@ -46,26 +50,29 @@ function e2d3Update(responce) {
     e2d3Show(true);
 }
 
-
+var data_copy = null;
 //スライだー をついか
 
 var id ="#e2d3-chart-area";
 function add_slider(){
-	drawArea = d3.select(id)
-	.append("input")
+     d3.select(id)
+    .append("input")
     .attr("type",'range')
     .style('width','100px').style('height','10px')
     .attr('min',0)
     .attr('max',100)
     .attr('step',20)
     .on('change',function(d){
-        console.log(this.value +"");
+        ts_slider =  parseInt(this.value);
+        show(data_copy);    
     })
 
 };
 
 //変換されたjsonデータを使ってグラフ描画
 function show(data) {
+    
+    data_copy = data;
     
     //dataは、bind2jsonで渡すdimensionオプションによって、整形されたJsonオブジェクトです。
     //描画は、#e2d3-chart-area 内にしてください。
@@ -85,7 +92,7 @@ function show(data) {
 
     
     // UIからスライダーの位置を取得する。
-    var currentIndex = 20;
+    var currentIndex = ts_slider;
     
         
         
