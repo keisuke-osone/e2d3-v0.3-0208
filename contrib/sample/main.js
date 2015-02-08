@@ -1,31 +1,149 @@
 /**
-ƒTƒ“ƒvƒ‹—pmain.js
-
-Window•‚ÍAƒOƒ[ƒoƒ‹•Ï” windowSize ‚ğg—p‚·‚é‚±‚Æ‚ª‚Å‚«‚Ü‚·
+ã‚µãƒ³ãƒ—ãƒ«ç”¨main.js
+Windowå¹…ã¯ã€ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•° windowSize ã‚’ä½¿ç”¨ã™ã‚‹ã“ã¨ãŒã§ãã¾ã™
 */
+var xMetrics = 'sunshine_duration';
+var yMetrics = 'wind_speed';
+var zMetrics = 'temperature';
 
-//Excel‚Éƒf[ƒ^‚ªƒZƒbƒg‚³‚ê‚½ŒãAÅ‰‚ÉŒÄ‚Î‚ê‚éƒƒ\ƒbƒhi•K{j
-function e2d3Show() {
+// ã‚µã‚¤ã‚ºã®å®šç¾©
+var maxHeight = 400;
+var maxWidth = windowSize;
+var leftMargin = 50;
+var topMargin = 50;
+var bottomMargin = 50;
+    
+// æç”»é ˜åŸŸã®ã‚µã‚¤ã‚ºã‚’è¨­å®š
+var height = maxHeight - topMargin - bottomMargin;
+var width = maxWidth - leftMargin;
+var r = 20;
+    
+// svgã‚’è¿½åŠ 
+drawArea = d3.select('#e2d3-chart-area').append('svg')
+    .attr('width', maxWidth)
+    .attr('height', maxHeight)
+    .append('g')
+    .attr('transform', 'translate(' + leftMargin + ',' + topMargin + ')')
 
-    //Excelã‚Å‚Ìƒf[ƒ^•ÏXƒCƒxƒ“ƒg‚ğ•â‘«i‚±‚Ìê‡‚Íe2d3Updateƒƒ\ƒbƒh‚ğƒR[ƒ‹ƒoƒbƒN‚Éw’èj
-    //"e2d3BindId"‚ÍƒOƒ[ƒoƒ‹‚È•Ï”‚Å‚·
-    e2d3.addChangeEvent(e2d3BindId, e2d3Update, function () {
 
-        //Excelã‚ÌƒoƒCƒ“ƒh”ÍˆÍ‚Ìƒf[ƒ^‚ğjson‚É•ÏŠ·i•K{jB(‚±‚Ìê‡ƒR[ƒ‹ƒoƒbƒN‚Éshowƒƒ\ƒbƒh‚ğw’è)
-        e2d3.bind2Json(e2d3BindId, { dimension: '3d' }, show);
-    });
+
+//Excelã«ãƒ‡ãƒ¼ã‚¿ãŒã‚»ãƒƒãƒˆã•ã‚ŒãŸå¾Œã€æœ€åˆã«å‘¼ã°ã‚Œã‚‹ãƒ¡ã‚½ãƒƒãƒ‰ï¼ˆå¿…é ˆï¼‰
+function e2d3Show(isUpdate) {
+
+    //Excelä¸Šã§ã®ãƒ‡ãƒ¼ã‚¿å¤‰æ›´ã‚¤ãƒ™ãƒ³ãƒˆã‚’è£œè¶³ï¼ˆã“ã®å ´åˆã¯e2d3Updateãƒ¡ã‚½ãƒƒãƒ‰ã‚’ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯ã«æŒ‡å®šï¼‰
+    //"e2d3BindId"ã¯ã‚°ãƒ­ãƒ¼ãƒãƒ«ãªå¤‰æ•°ã§ã™
+    if (isUpdate) {
+        e2d3.bind2Json(e2d3BindId, { dimension: '2d' }, show);
+    }else{              
+        e2d3.addChangeEvent(e2d3BindId, e2d3Update, function () {
+            //Excelä¸Šã®ãƒã‚¤ãƒ³ãƒ‰ç¯„å›²ã®ãƒ‡ãƒ¼ã‚¿ã‚’jsonã«å¤‰æ›ï¼ˆå¿…é ˆï¼‰ã€‚(ã“ã®å ´åˆã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯ã«showãƒ¡ã‚½ãƒƒãƒ‰ã‚’æŒ‡å®š)
+            e2d3.bind2Json(e2d3BindId, { dimension: '2d' }, show);
+        });
+    }
 }
-//ƒf[ƒ^•ÏX‚ÌƒR[ƒ‹ƒoƒbƒN—pƒƒ\ƒbƒhi•K{j
+//ãƒ‡ãƒ¼ã‚¿å¤‰æ›´æ™‚ã®ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯ç”¨ãƒ¡ã‚½ãƒƒãƒ‰ï¼ˆå¿…é ˆï¼‰
 function e2d3Update(responce) {
     console.log("e2d3Update :" + responce);
-    dataUpdate(responce);
+    e2d3Show(true);
 }
 
-//•ÏŠ·‚³‚ê‚½jsonƒf[ƒ^‚ğg‚Á‚ÄƒOƒ‰ƒt•`‰æ
+
+var metrics = 'wind_speed';
+
+//å¤‰æ›ã•ã‚ŒãŸjsonãƒ‡ãƒ¼ã‚¿ã‚’ä½¿ã£ã¦ã‚°ãƒ©ãƒ•æç”»
 function show(data) {
-    //data‚ÍAbind2json‚Å“n‚·dimensionƒIƒvƒVƒ‡ƒ“‚É‚æ‚Á‚ÄA®Œ`‚³‚ê‚½JsonƒIƒuƒWƒFƒNƒg‚Å‚·B
-    //•`‰æ‚ÍA#e2d3-chart-area “à‚É‚µ‚Ä‚­‚¾‚³‚¢B
+    //dataã¯ã€bind2jsonã§æ¸¡ã™dimensionã‚ªãƒ—ã‚·ãƒ§ãƒ³ã«ã‚ˆã£ã¦ã€æ•´å½¢ã•ã‚ŒãŸJsonã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã§ã™ã€‚
+    //æç”»ã¯ã€#e2d3-chart-area å†…ã«ã—ã¦ãã ã•ã„ã€‚
+        
+    // æœ€å¤§å€¤ã®å–å¾—
+    var xMax = d3.max(data, function (d) { return parseInt(d[xMetrics], 10) + 1})
+    // æœ€å°å€¤ã®å–å¾—
+    var xMin = d3.min(data, function (d) { return d[xMetrics]})
 
+    // æœ€å¤§å€¤ã®å–å¾—
+    var yMax = d3.max(data, function (d) { return parseInt(d[yMetrics], 10) + 1})
+    // æœ€å°å€¤ã®å–å¾—
+    var yMin = d3.min(data, function (d) { return d[yMetrics]})
 
+    // æœ€å¤§å€¤ã®å–å¾—
+    var zMax = d3.max(data, function (d) { return parseInt(d[zMetrics], 10) + 1})
+    // æœ€å°å€¤ã®å–å¾—
+    var zMin = d3.min(data, function (d) { return d[zMetrics]})
+
+    // xã®ã‚¹ã‚±ãƒ¼ãƒ«ã®è¨­å®š
+    var xScale = d3.scale.linear()
+                    .domain([xMin, xMax])
+                    .range([0, width]);
+
+    // yã®ã‚¹ã‚±ãƒ¼ãƒ«ã®è¨­å®š
+    var yScale = d3.scale.linear()
+                    .domain([yMin, yMax])
+                    .range([height, 0]);
+
+    // yã®ã‚¹ã‚±ãƒ¼ãƒ«ã®è¨­å®š
+    var zScale = d3.scale.linear()
+                    .domain([zMin, zMax])
+                    .range([0, r]);
+
+    // xã®è»¸ã®è¨­å®š
+    var xAxis = d3.svg.axis()
+                    .scale(xScale)
+                    .orient("bottom");
+
+    // yã®è»¸ã®è¨­å®š
+    var yAxis = d3.svg.axis()
+                    .scale(yScale)
+                    .orient('left');
+
+    
+    // xè»¸ã‚’svgã«è¡¨ç¤º
+    drawArea.
+    drawArea
+        .append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + (height - 1)+ ")")
+        .call(xAxis);
+
+    // yè»¸ã‚’svgã«è¡¨ç¤º
+    drawArea
+        .append('g')
+        .attr('class', 'y axis')
+        .call(yAxis)
+        
+    // æ•£å¸ƒå›³ã®æç”»
+    drawArea
+        .selectAll('circle')
+        .data(data)
+        .enter()
+        .append('circle')
+        .on('click', function (d) {
+            alert(yMetrics + d[yMetrics])
+        })
+        .on('mouseover', function (d) {
+            d3.select(this)
+                .attr('fill', 'orange')
+        })
+        .on('mouseout', function (d) {
+            d3.select(this)
+                .attr('fill', 'red');
+        })
+        .attr('fill', '#f00')
+        .attr('r', 0)
+        .attr('cx', function (d) {
+            return xScale(d[xMetrics]);
+        })        
+        .attr('cy', function (d) {
+            return yScale(d[yMetrics])
+        })
+        .transition()
+        .duration(1000)
+        .delay(function(d, i) {
+            return  i * 20;
+        })
+        .ease('bounce')
+        .attr('r', function(d, i) {
+            return zScale(d[zMetrics])
+        });
 }
+
 
